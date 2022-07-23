@@ -1,74 +1,14 @@
 import argparse
 import joblib
 from math import ceil, floor
+from nlpclassifier import NLPClassifier
 import numpy as np
 import os
-from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin, clone
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.metrics import balanced_accuracy_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import ComplementNB, GaussianNB, MultinomialNB
 from sklearn.linear_model import SGDClassifier
 from sklearn.svm import LinearSVC
-import textutils
-
-class Model(BaseEstimator, ClassifierMixin, TransformerMixin):
-    def __init__(self, feature_extractor=CountVectorizer(), estimator=ComplementNB(), ngram_range=(1, 1)):
-        """ 
-        Inits the model.
-        Arguments:
-            feature_extractor: Method to use for transforming feature extraction. Supports some sklearn extractors:
-                - CountVectorizer()
-                - TfidfVectorizer
-            estimator: sklearn estimator to use. Options:
-                - ComplementNB()
-                - GaussianNB()
-                - MultinomialNB()
-                - LinearSVC()
-                - SGDClassifier()
-            ngram_range: Range of ngrams to produce as features
-        """
-
-        self.feature_extractor = feature_extractor
-        self.ngram_range = ngram_range
-
-        self.estimator = estimator
-
-    def fit(self, X, y):
-        """
-        Fits the the model.
-        Arguments:
-            X:  Input data
-            y:  Input labels
-        """
-        self.feature_extractor.set_params(tokenizer=textutils.clean_text, ngram_range=self.ngram_range)
-
-        X_processed = self.feature_extractor.fit_transform(X.copy()).toarray()
-        self.estimator = self.estimator.fit(X_processed, y)
-
-    def score(self, X, y):
-        """
-        Evaluates the accuracy of the data.
-        Arguments:
-            - X: Real labels
-            - y: Real labels
-
-        Returns:
-            Balanced accuracy score of predicted labels
-        """
-
-        return balanced_accuracy_score(y, self.predict(X))
-
-    def predict(self, X):
-        """
-        Generates predictions based on data.
-        Arguments:
-            X: (unseen) data
-        """
-
-        X = self.feature_extractor.transform(X.copy()).toarray()
-        y = self.estimator.predict(X)
-        return y
 
 
 def load_data(datasets, train_size=0.8):
@@ -111,14 +51,11 @@ if __name__ == "__main__":
 
     # Load datasets from the given folder and files
     datasets = [os.getcwd() + args.d + f for f in args.f]
-
-    # Initialize model
-    model = Model()
     X_train, X_test, y_train, y_test = load_data(
         datasets, train_size=float(args.s))
 
-
-    gs = GridSearchCV(Model(), param_grid={
+    # Perform grid search
+    gs = GridSearchCV(NLPClassifier(), param_grid={
         "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
         "estimator": [ComplementNB(), GaussianNB(), MultinomialNB(), LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")],
         "ngram_range": [(1, 1), (1, 2), (1, 3)]}, verbose=1, n_jobs=-1)
