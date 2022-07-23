@@ -38,13 +38,47 @@ main {
   font-family: "Nirmala UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #312c2c;
-  height: 40vh;
-  width: 60%;
+  text-align: left;
+  height: 50vh;
+  width: calc(70% - 5%);
+  margin: 2.5%;
+}
+
+.text-warning {
+  color: #ee004c !important;
+}
+
+#text-input-col > p {
+  font-family: monospace;
+  color: #6a6060;
+  font-size: 0.8em;
+  float: right;
 }
 
 textarea {
-  height: 100%;
-  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  font-family: monospace;
+  height: calc(90% - 2em);
+  width: calc(100% - 2em);
   resize: none;
+  box-shadow: inset 0px 0px 4px #ccc;
+  padding: 1em;
+  font-size: 1.1em;
+  margin-top: 1em;
+  color: #6a6060;
+}
+
+textarea:focus {
+  outline: none;
+  box-shadow: inset 0px 0px 4px #fca46d;
+}
+
+#results {
+  border-left: 1px solid rgb(234, 234, 234);
+  padding-left: 2em;
+  width: 30%;
+  height: 50vh;
+  text-align: left;
 }

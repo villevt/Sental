@@ -57,6 +57,8 @@ Backend can be run from `backend`-folder with `uvicorn main:app`.
 
 Minimal (TypeScript) React single page app, that allows for inputting text, and getting automatic inference for the text. Frontend can be run from `frontend`-folder with `npm start`.
 
+NOTE: The frontend is not responsive and won't look good on mobile devices.
+
 ## Model data
 
 I constructed the model on sentiment data (`nlp/data`) derived from https://www.kaggle.com/datasets/marklvl/sentiment-labelled-sentences-data-set
