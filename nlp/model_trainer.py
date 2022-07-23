@@ -5,7 +5,7 @@ import numpy as np
 import os
 from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin, clone
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.metrics import balanced_accuracy_score, confusion_matrix
+from sklearn.metrics import balanced_accuracy_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import ComplementNB, GaussianNB, MultinomialNB
 from sklearn.linear_model import SGDClassifier
@@ -120,8 +120,8 @@ if __name__ == "__main__":
 
     gs = GridSearchCV(Model(), param_grid={
         "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
-        "estimator": [ComplementNB(), GaussianNB(), MultinomialNB(), LinearSVC(), SGDClassifier()],
-        "ngram_range": [(1, 1), (1, 2), (1, 3)]}, verbose=1)
+        "estimator": [ComplementNB(), GaussianNB(), MultinomialNB(), LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")],
+        "ngram_range": [(1, 1), (1, 2), (1, 3)]}, verbose=1, n_jobs=-1)
     gs.fit(X_train, y_train)
 
     print(gs.cv_results_)
