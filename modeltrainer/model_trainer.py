@@ -7,7 +7,7 @@ import os
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import ComplementNB, GaussianNB, MultinomialNB
-from sklearn.linear_model import SGDClassifier
+from sklearn.linear_model import SGDClassifier, LogisticRegression
 from sklearn.svm import LinearSVC
 
 
@@ -57,7 +57,8 @@ if __name__ == "__main__":
     # Perform grid search
     gs = GridSearchCV(NLPClassifier(), param_grid={
         "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
-        "estimator": [ComplementNB(), GaussianNB(), MultinomialNB(), LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")],
+        "estimator": [ComplementNB(), GaussianNB(), MultinomialNB(), LogisticRegression(penalty="l1"), 
+            LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")],
         "ngram_range": [(1, 1), (1, 2), (1, 3)],
         "min_df": [0, 1, 2]}, verbose=1, n_jobs=-1)
     gs.fit(X_train, y_train)
