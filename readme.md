@@ -58,7 +58,7 @@ Note that we are only comparing different models here with default hyperparamete
 
 The backend for the project is a minimalistic FastAPI server that responds to text requests with inferences (positive/negative). Following limitations are in place:
 - Requests can only contain upwards to 400 characters
-- A single IP address can only make up to 20 requests per day
+- A single IP address can only make up to 100 requests per day
 
 Backend can be run from `backend`-folder with `uvicorn main:app`.
 
@@ -66,7 +66,9 @@ Since the backend is built on FastAPI, the backend also comes with Swagger docum
 
 ## Frontend
 
-Minimal (TypeScript) React single page app, that allows for inputting text, and getting automatic inference for the text. Frontend can be run from `frontend`-folder with `npm start`.
+Minimal (TypeScript) React single page app, that allows for inputting text, and getting automatic inference for the text. The inference shows the sentiment and probability of the classification.
+
+Frontend can be run from `frontend`-folder with `npm start`.
 
 NOTE: The frontend is not responsive and won't look good on mobile devices.
 
