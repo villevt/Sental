@@ -13,6 +13,7 @@ def clean_text(sentence):
         - Removes stopwords and punctuation
         - Tokenizes words
     """
+    lemmatizer = nltk.stem.WordNetLemmatizer()
 
     try:
         stopwords = nltk.corpus.stopwords.words("english")
@@ -22,7 +23,7 @@ def clean_text(sentence):
         nltk.download("punkt")
         stopwords = nltk.corpus.stopwords.words("english")
 
-    return np.array([w.lower() for w in nltk.tokenize.word_tokenize(sentence) 
+    return np.array([lemmatizer.lemmatize(w.lower()) for w in nltk.tokenize.word_tokenize(sentence) 
         if w not in stopwords and w not in string.punctuation])
 
 class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
