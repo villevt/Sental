@@ -51,9 +51,11 @@ The backend for the project is a minimalistic FastAPI server that responds to te
 - Requests can only contain upwards to 400 characters
 - A single IP address can only make up to 20 requests per day
 
+Backend can be run from `backend`-folder with `uvicorn main:app`.
+
 ## Frontend
 
-Minimal (TypeScript) React single page app, that allows for inputting text, and getting automatic inference for the text.
+Minimal (TypeScript) React single page app, that allows for inputting text, and getting automatic inference for the text. Frontend can be run from `frontend`-folder with `npm start`.
 
 ## Model data
 
