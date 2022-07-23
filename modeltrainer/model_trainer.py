@@ -58,7 +58,8 @@ if __name__ == "__main__":
     gs = GridSearchCV(NLPClassifier(), param_grid={
         "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
         "estimator": [ComplementNB(), GaussianNB(), MultinomialNB(), LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")],
-        "ngram_range": [(1, 1), (1, 2), (1, 3)]}, verbose=1, n_jobs=-1)
+        "ngram_range": [(1, 1), (1, 2), (1, 3)],
+        "min_df": [0, 1, 2]}, verbose=1, n_jobs=-1)
     gs.fit(X_train, y_train)
 
     print(gs.cv_results_)

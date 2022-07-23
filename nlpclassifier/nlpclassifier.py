@@ -26,7 +26,7 @@ def clean_text(sentence):
         if w not in stopwords and w not in string.punctuation])
 
 class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
-    def __init__(self, feature_extractor=CountVectorizer(), estimator=ComplementNB(), ngram_range=(1, 1)):
+    def __init__(self, feature_extractor=CountVectorizer(), estimator=ComplementNB(), ngram_range=(1, 1), min_df=0):
         """ 
         Inits the model.
         Arguments:
@@ -44,6 +44,7 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
 
         self.feature_extractor = feature_extractor
         self.ngram_range = ngram_range
+        self.min_df = min_df
 
         self.estimator = estimator
 
@@ -54,7 +55,7 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
             X:  Input data
             y:  Input labels
         """
-        self.feature_extractor.set_params(tokenizer=clean_text, ngram_range=self.ngram_range)
+        self.feature_extractor.set_params(tokenizer=clean_text, ngram_range=self.ngram_range, min_df=self.min_df)
 
         X_processed = self.feature_extractor.fit_transform(X.copy()).toarray()
         self.estimator = self.estimator.fit(X_processed, y)
