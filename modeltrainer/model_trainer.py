@@ -4,6 +4,9 @@ from math import ceil, floor
 from nlpclassifier import NLPClassifier
 import numpy as np
 import os
+import pandas as pd
+from sklearn.base import clone
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import ComplementNB, GaussianNB, MultinomialNB
@@ -54,21 +57,42 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = load_data(
         datasets, train_size=float(args.s))
 
+    #estimators = [ComplementNB(), GaussianNB(), MultinomialNB(), LogisticRegression(penalty="l1", solver="saga"),
+    #    LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")]
+
+    estimators = [ComplementNB()]
+
     # Perform grid search
     gs = GridSearchCV(NLPClassifier(), param_grid={
         "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
-        "estimator": [ComplementNB(), GaussianNB(), MultinomialNB(), LogisticRegression(penalty="l1"), 
-            LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")],
+        "estimator": [CalibratedClassifierCV(e, method="sigmoid", cv=5) for e in estimators],
         "ngram_range": [(1, 1), (1, 2), (1, 3)],
         "min_df": [0, 1, 2]}, verbose=1, n_jobs=-1)
     gs.fit(X_train, y_train)
 
-    print(gs.cv_results_)
+    # Pretty-print cv results
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+        print(pd.DataFrame(gs.cv_results_))
 
     print(gs.best_estimator_)
 
     print(f"Selected parameters: {gs.best_params_}")
     print(f"Mean score on validation set: {gs.best_score_}")
-    print(f"Balanced accuracy score on test set of {ceil((1 - float(args.s)) * 100)}%: {gs.score(X_test, y_test)}")
+    print(
+        f"Balanced accuracy score on test set of {ceil((1 - float(args.s)) * 100)}%: {gs.score(X_test, y_test)}")
 
-    joblib.dump(gs.best_estimator_,  "sentiment_classifier.joblib.pkl")
+    # Retrain the model on full data
+
+    X_full = np.concatenate((X_train, X_test), axis=0)
+    y_full = np.concatenate((y_train, y_test), axis=0)
+
+    final_estimator = NLPClassifier(
+        estimator = CalibratedClassifierCV(clone(gs.best_estimator_.estimator.base_estimator), method="sigmoid", cv=5),
+        feature_extractor = clone(gs.best_estimator_.feature_extractor),
+        min_df = gs.best_estimator_.min_df,
+        ngram_range = gs.best_estimator_.ngram_range
+    )
+
+    final_estimator.fit(X_full, y_full)
+
+    joblib.dump(final_estimator, "sentiment_classifier.joblib.pkl")

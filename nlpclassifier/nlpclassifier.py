@@ -11,17 +11,11 @@ def clean_text(sentence):
     Cleans a list of sentences:
         - Normalizes text to lowercase
         - Removes stopwords and punctuation
-        - Tokenizes words
+        - Tokenizes and lemmatizes wowrds
     """
-    lemmatizer = nltk.stem.WordNetLemmatizer()
 
-    try:
-        stopwords = nltk.corpus.stopwords.words("english")
-        nltk.tokenize.word_tokenize("test test")
-    except:
-        nltk.download("stopwords")
-        nltk.download("punkt")
-        stopwords = nltk.corpus.stopwords.words("english")
+    stopwords = nltk.corpus.stopwords.words("english")
+    lemmatizer = nltk.stem.WordNetLemmatizer()
 
     return np.array([lemmatizer.lemmatize(w.lower()) for w in nltk.tokenize.word_tokenize(sentence) 
         if w not in stopwords and w not in string.punctuation])
@@ -83,4 +77,16 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
 
         X = self.feature_extractor.transform(X.copy()).toarray()
         y = self.estimator.predict(X)
+        return y
+
+
+    def predict_proba(self, X):
+        """
+        Generates probability predictions based on data.
+        Arguments:
+            X: (unseen) data
+        """
+
+        X = self.feature_extractor.transform(X.copy()).toarray()
+        y = self.estimator.predict_proba(X)
         return y

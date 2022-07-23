@@ -7,7 +7,7 @@ A small hobby project for practicing NLP sentiment analysis, and more so ML depl
 * Small full-stack webpage for demonstrating inference from the model (FastAPI, React)
 * Deployment pipeline, for example to Heroku
 
-## Customer NLP classifier
+## Custom NLP classifier
 
 The NLP classifier is built using sklearn. For the purpose of employing grid search over different models. The custom class is located in `nlpclassifier` and needs to be built by running `pip install .` in the corresponding folder. The custom model class is a requirement for both the backend, and model trainer utility.
 
@@ -32,7 +32,12 @@ The command line script expects the following syntax:
 
 ## Modelling approach
 
-The modelling approach here was relatively simple. I employed an grid search over multiple different feature extractors and classifiers, and chose the classifier with the best balanced accuracy (since I haven't done a stratified train-test-split!) 
+The modelling approach here was relatively simple. I used my custom sklearn classifier with integrated text tokenization which:
+- Normalizes text to lowercase
+- Removes stopwords and punctuation
+- Tokenizes and lemmatizes words
+
+Having the custom wrapper classifier in place, which, I employed an grid search over multiple different feature extractors and classifiers (to feed into my custom wrapper classifier), and chose the classifier with the best balanced accuracy (since I hadn't done a stratified train-test-split!). Furthermore, to get probabilities out of models that did not support those, and also to calibrate other models I used a Platt's method for cross-validated probability calibration, as an "inner" cross validation. After finding the best model with this approach, I then trained the model on the entire dataset, also including test data, again with 5-fold calibration cross-validation to avoid overfitting.
 
 I represented the features with:
 - Bag of words, 1 to 3 n-grams
