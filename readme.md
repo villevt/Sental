@@ -7,6 +7,10 @@ A small hobby project for practicing NLP sentiment analysis, and more so ML depl
 * Small full-stack webpage for demonstrating inference from the model (FastAPI, React)
 * Deployment pipeline, for example to Heroku
 
+## Customer NLP classifier
+
+The NLP classifier is built using sklearn. For the purpose of employing grid search over different models. The custom class is located in `nlpclassifier` and needs to be built by running `pip install .` in the corresponding folder. The custom model class is a requirement for both the backend, and model trainer utility.
+
 ## Command-line script
 
 The command line script for model deployment is located in the `nlp` folder. The script takes in text files in the following format for training
