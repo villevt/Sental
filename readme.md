@@ -12,8 +12,10 @@ A small hobby project for practicing NLP sentiment analysis, and more so ML depl
 The command line script for model deployment is located in the `nlp` folder. The script takes in text files in the following format for training
 
     negative text\t0\n
-    positive text\t0\n
+    positive text\t1\n
     ...
+    
+Where 0 denotes a negative, and 1 denotes a positive text.
 
 The script then picks a best model out of multiple options, based on balanced accuracy score. Once the best model is selected, it is dumped into file `model.joblib`.
 
