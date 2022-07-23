@@ -2,7 +2,7 @@
 
 ## Summary
 
-A small hobby project for practicing NLP sentiment analysis, and more so ML deployment. The intention is to create 
+A small hobby project for practicing NLP sentiment analysis, and more so ML deployment. The intention is to create a simple text sentiment analyzer, slightly akin to tools such as Grammarly. The project will include:
 * Command-line script for (re-)training supervised models based on grid search defined in the script itself (scikit-learn)
 * Small full-stack webpage for demonstrating inference from the model (FastAPI, React)
 * Deployment pipeline, for example to Heroku
