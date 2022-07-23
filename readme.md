@@ -62,6 +62,8 @@ The backend for the project is a minimalistic FastAPI server that responds to te
 
 Backend can be run from `backend`-folder with `uvicorn main:app`.
 
+Since the backend is built on FastAPI, the backend also comes with Swagger documentation in path `/docs` in the api.
+
 ## Frontend
 
 Minimal (TypeScript) React single page app, that allows for inputting text, and getting automatic inference for the text. Frontend can be run from `frontend`-folder with `npm start`.
