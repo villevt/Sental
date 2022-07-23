@@ -5,6 +5,7 @@ import axios from "axios";
 
 function App() {
   const [sentiment, setSentiment] = useState("❔")
+  const [probability, setProbability] = useState("❔");
   const [timer, setTimer] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingPeriods, setLoadingPeriods] = useState(0);
@@ -38,6 +39,9 @@ function App() {
             } else {
               setSentiment("☹️");
             }
+
+            const probability = (res.data.probability * 100).toFixed(2) + "%";
+            setProbability(probability)
           })
           .catch(error => {
             setLoading(false);
@@ -45,6 +49,7 @@ function App() {
           })
       } else {
         setSentiment("❔");
+        setProbability("❔");
       }
     }, 2000);
 
@@ -72,12 +77,22 @@ function App() {
           <p className={textLength > 400 ? "text-warning" : "text-normal"}>{textLength} / 400 characters</p>
         </div>
         <div id="results">
-          <div id="sentiment">
-            <b>Sentiment</b> &emsp;
-            {loading && ".".repeat(loadingPeriods % 3 + 1)}
-            {loading && <br/>}
-            {!loading && sentiment}
-          </div>
+          <table>
+            <tbody>
+              <tr id="results-sentiment">
+                <td>Sentiment</td>
+                <td>
+                  {loading ? ".".repeat(loadingPeriods % 3 + 1) : sentiment}
+                </td>
+              </tr>
+              <tr id="results-probability">
+                <td>Probability</td>
+                <td>
+                  {loading ? ".".repeat(loadingPeriods % 3 + 1) : probability}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </main>
     </div>

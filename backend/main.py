@@ -28,8 +28,12 @@ class Text(BaseModel):
 
 class Classication(BaseModel):
     positive: bool
+    probability: float
 
 @app.post("/classify/", response_model=Classication)
 @limiter.limit("20/day")
 async def classify(request: Request, text: Text):
-    return {"positive": int(classifier.predict([text.text])[0])}
+    return {
+        "positive": int(classifier.predict([text.text])[0]),
+        "probability": float(max(classifier.predict_proba([text.text])[0]))
+    }
