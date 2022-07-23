@@ -4,7 +4,7 @@
 
 A small hobby project for practicing NLP sentiment analysis, and more so ML deployment. The intention is to create 
 * Command-line script for (re-)training supervised models based on grid search defined in the script itself (scikit-learn)
-* Small full-stack webpage for demonstrating inference from the model (Django, React)
+* Small full-stack webpage for demonstrating inference from the model (FastAPI, React)
 * Deployment pipeline, for example to Heroku
 
 ## Command-line script
@@ -44,6 +44,12 @@ Different classifiers used were:
 Based on my results so far, it seems that Linear SVC is the best approach, together with TF-IDF, and mono- and bi-gram features. The model exhibited a validation balanced accuracy of 80.30% on 1 800 observations' 5-fold CV, and a test balanced accuracy of 80.79% on a test set of 1 200 observations.
 
 Note that we are only comparing different models here with default hyperparameters, and not getting deep into hyperparameter-tuning.
+
+## Backend
+
+The backend for the project is a minimalistic FastAPI server that responds to text requests with inferences. Following limitations are in place:
+- Requests can only contain upwards to 400 characters
+- A single IP address can only make up to 20 requests per day
 
 ## Model data
 
