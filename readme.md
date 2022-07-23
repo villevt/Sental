@@ -47,9 +47,13 @@ Note that we are only comparing different models here with default hyperparamete
 
 ## Backend
 
-The backend for the project is a minimalistic FastAPI server that responds to text requests with inferences. Following limitations are in place:
+The backend for the project is a minimalistic FastAPI server that responds to text requests with inferences (positive/negative). Following limitations are in place:
 - Requests can only contain upwards to 400 characters
 - A single IP address can only make up to 20 requests per day
+
+## Frontend
+
+Minimal (TypeScript) React single page app, that allows for inputting text, and getting automatic inference for the text.
 
 ## Model data
 

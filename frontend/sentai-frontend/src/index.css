@@ -1,0 +1,8 @@
+body {
+  background-color: #fca46d;
+  margin: 0;
+  font-family: "Nirmala UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #312c2c;
+}
