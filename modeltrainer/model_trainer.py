@@ -19,7 +19,6 @@ def load_data(datasets, train_size=0.8):
     Loads a dataset for training the model.
     Arguments:
         datasets:   Datasets to use in training. Takes in tab-delimited text files with sentences on first column and binary sentiment on the second.
-        partition:  Should the dataset be partitioned, i.e. should the entire data be loaded into memory at once?
         train_size: Size of training data set as a fraction of the dataset
     """
     # Load data
@@ -41,6 +40,19 @@ def load_data(datasets, train_size=0.8):
     return X_train, X_test, y_train, y_test
 
 
+def load_lexicon(file):
+    """
+    Loads a lexicon
+    Arguments:
+        file:  File to take lexicon from. Takes in tab-delimited text files with sentences on first column and sentiment on the second.
+    """
+    # Load data
+    data = np.loadtxt(file, dtype=str, delimiter="\t")
+
+    # Turn into dict
+    return {key: int(val) for key, val in data}
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", nargs="+",
@@ -49,6 +61,8 @@ if __name__ == "__main__":
                         help="directory for training data files")
     parser.add_argument("-s", nargs="?", default=0.8,
                         help="train set size")
+    parser.add_argument("-l", nargs="?",
+                        help="lexicon .txt file to use in training")
 
     args = parser.parse_args()
 
@@ -57,13 +71,17 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = load_data(
         datasets, train_size=float(args.s))
 
-    #estimators = [ComplementNB(), GaussianNB(), MultinomialNB(), LogisticRegression(penalty="l1", solver="saga"),
-    #    LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")]
+    if args.l:
+        lexicon = load_lexicon(os.getcwd() + args.d + args.l)
+    else:
+        lexicon = None
 
-    estimators = [ComplementNB()]
+    # Use a select set of estimators
+    estimators = [ComplementNB(), GaussianNB(), MultinomialNB(), LogisticRegression(penalty="l1", solver="saga"),
+        LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")]
 
     # Perform grid search
-    gs = GridSearchCV(NLPClassifier(), param_grid={
+    gs = GridSearchCV(NLPClassifier(lexicon=lexicon), param_grid={
         "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
         "estimator": [CalibratedClassifierCV(e, method="sigmoid", cv=5) for e in estimators],
         "ngram_range": [(1, 1), (1, 2), (1, 3)],
@@ -82,15 +100,16 @@ if __name__ == "__main__":
         f"Balanced accuracy score on test set of {ceil((1 - float(args.s)) * 100)}%: {gs.score(X_test, y_test)}")
 
     # Retrain the model on full data
-
     X_full = np.concatenate((X_train, X_test), axis=0)
     y_full = np.concatenate((y_train, y_test), axis=0)
 
     final_estimator = NLPClassifier(
-        estimator = CalibratedClassifierCV(clone(gs.best_estimator_.estimator.base_estimator), method="sigmoid", cv=5),
-        feature_extractor = clone(gs.best_estimator_.feature_extractor),
-        min_df = gs.best_estimator_.min_df,
-        ngram_range = gs.best_estimator_.ngram_range
+        estimator=CalibratedClassifierCV(clone(gs.best_estimator_.estimator.base_estimator),
+                                         method="sigmoid", cv=5, n_jobs=-1),
+        feature_extractor=clone(gs.best_estimator_.feature_extractor),
+        min_df=gs.best_estimator_.min_df,
+        ngram_range=gs.best_estimator_.ngram_range,
+        lexicon=lexicon
     )
 
     final_estimator.fit(X_full, y_full)

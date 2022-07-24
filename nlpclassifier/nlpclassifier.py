@@ -1,14 +1,24 @@
 import nltk
 import numpy as np
 import string
-from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin, clone
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import balanced_accuracy_score
-from sklearn.naive_bayes import ComplementNB
+from sklearn.naive_bayes import ComplementNB, GaussianNB, MultinomialNB
 
-def clean_text(sentence):
+def lexicon_sentiment(tokenized_sentence, lexicon):
+    """
+    Extracts lexicon-based sentiment scored for a tokenized sentence.
+    Parameters:
+        - lexicon: lexicon to derive sentiment scores from. Should be a dictionary with format {"word": score}
+        - tokenized_sentence: A tokenized sentence to calculate the total score for
+    """
+
+    return sum([int(lexicon.get(w, 0)) for w in tokenized_sentence])
+
+def tokenize_text(sentence):
     """ 
-    Cleans a list of sentences:
+    Tokenizes a sentence:
         - Normalizes text to lowercase
         - Removes stopwords and punctuation
         - Tokenizes and lemmatizes wowrds
@@ -20,8 +30,13 @@ def clean_text(sentence):
     return np.array([lemmatizer.lemmatize(w.lower()) for w in nltk.tokenize.word_tokenize(sentence) 
         if w not in stopwords and w not in string.punctuation])
 
+# Returns a dummy value. Required to disable default feature extractor preprocessors/tokenizers
+def dummy(x):
+    return x
+
 class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
-    def __init__(self, feature_extractor=CountVectorizer(), estimator=ComplementNB(), ngram_range=(1, 1), min_df=0):
+    def __init__(self, feature_extractor=CountVectorizer(), estimator=ComplementNB(), 
+        ngram_range=(1, 1), min_df=0, lexicon=None):
         """ 
         Inits the model.
         Arguments:
@@ -35,11 +50,13 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
                 - LinearSVC()
                 - SGDClassifier()
             ngram_range: Range of ngrams to produce as features
+            lexicon: Optional lexicon for extracting sentiment scores
         """
 
         self.feature_extractor = feature_extractor
         self.ngram_range = ngram_range
         self.min_df = min_df
+        self.lexicon = lexicon
 
         self.estimator = estimator
 
@@ -47,12 +64,26 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
         """
         Fits the the model.
         Arguments:
-            X:  Input data
-            y:  Input labels
+            X:          Input data
+            y:          Input labels
         """
-        self.feature_extractor.set_params(tokenizer=clean_text, ngram_range=self.ngram_range, min_df=self.min_df)
 
-        X_processed = self.feature_extractor.fit_transform(X.copy()).toarray()
+        # Get tokens
+        tokens = [tokenize_text(s) for s in X.copy()]
+
+        # Get feature matrix
+        self.feature_extractor.set_params(preprocessor=dummy,
+            tokenizer=dummy, ngram_range=self.ngram_range, min_df=self.min_df)
+        X_processed = self.feature_extractor.fit_transform(tokens).toarray()
+
+        # Get lexicon based features and append to matrix.
+        # NOTE: Lexicon-based features cannot be used with Naive Bayes classifiers!
+        if self.lexicon:
+            if any([isinstance(self.estimator.base_estimator, e) for e in [ComplementNB, GaussianNB, MultinomialNB]]):
+                self.lexicon = None
+            else:
+                X_processed = np.column_stack((X_processed, [lexicon_sentiment(t, self.lexicon) for t in tokens]))
+
         self.estimator = self.estimator.fit(X_processed, y)
 
     def score(self, X, y):
@@ -75,8 +106,17 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
             X: (unseen) data
         """
 
-        X = self.feature_extractor.transform(X.copy()).toarray()
-        y = self.estimator.predict(X)
+        # Get tokens
+        tokens = [tokenize_text(s) for s in X.copy()]
+
+        # Get feature matrix
+        X_processed = self.feature_extractor.transform(tokens).toarray()
+
+        # Get lexicon based features and append to matrix
+        if self.lexicon:
+            X_processed = np.column_stack((X_processed, [lexicon_sentiment(t, self.lexicon) for t in tokens]))
+
+        y = self.estimator.predict(X_processed)
         return y
 
 
@@ -87,6 +127,15 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
             X: (unseen) data
         """
 
-        X = self.feature_extractor.transform(X.copy()).toarray()
-        y = self.estimator.predict_proba(X)
+        # Get tokens
+        tokens = [tokenize_text(s) for s in X.copy()]
+
+        # Get feature matrix
+        X_processed = self.feature_extractor.transform(tokens).toarray()
+
+        # Get lexicon based features and append to matrix
+        if self.lexicon:
+            X_processed = np.column_stack((X_processed, [lexicon_sentiment(t, self.lexicon) for t in tokens]))
+
+        y = self.estimator.predict_proba(X_processed)
         return y

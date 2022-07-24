@@ -1,1 +1,1 @@
-py model_trainer.py -f amazon_cells_labelled.txt imdb_labelled.txt yelp_labelled.txt -s 0.6
+py model_trainer.py -f amazon_cells_labelled.txt imdb_labelled.txt yelp_labelled.txt -l AFINN-111.txt -s 0.6
