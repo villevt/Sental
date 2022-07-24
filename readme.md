@@ -29,7 +29,7 @@ The command line script expects the following syntax:
 
     python model_trainer.py
     -f  List of text files to use in training, relative to working or specified directory
-    -l  List of lexicons to use in training, relative to working or specified directory
+    -l  A lexicon to use in training, relative to working or specified directory
     -d  Directory to search for text files, relative to working directory. Defaults to ./data
     -s  Size of training test, as fraction of total dataset    
 
