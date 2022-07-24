@@ -42,11 +42,11 @@ The modelling approach here was relatively simple. I used my custom sklearn clas
 
 In addition to text tokenizations, I extracted lexicon-based monogram sentiment scores as features, using AFINN lexicon.
 
-Having the custom wrapper classifier in place, which, I employed an grid search over multiple different feature extractors and classifiers (to feed into my custom wrapper classifier), and chose the classifier with the best balanced accuracy (since I hadn't done a stratified train-test-split!). Furthermore, to get probabilities out of models that did not support those, and also to calibrate other models I used a Platt's method for cross-validated probability calibration, as an "inner" cross validation. After finding the best model with this approach, I then trained the model on the entire dataset, also including test data, again with 5-fold calibration cross-validation to avoid overfitting.
-
 I represented the features with:
 - Bag of words, 1 to 3 n-grams
 - TF-IDF, 1 to 3 n-grams
+
+I then employed an grid search over multiple different feature extractors and classifiers (to feed into my custom wrapper classifier), and chose the classifier with the best balanced accuracy (since I hadn't done a stratified train-test-split!). To get probabilities out of models that did not support sklearn's predict_proba-method, and also to calibrate other models, I used Platt's method for cross-validated probability calibration, as an "inner" cross validation. After finding the best model with this approach, I then trained the model on the entire dataset, also including test data, again with 5-fold calibration cross-validation to avoid overfitting.
 
 Different classifiers used were:
 - Complement Naive Bayes
