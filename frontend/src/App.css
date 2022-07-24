@@ -85,7 +85,7 @@ textarea:focus {
 
 table {
   border-collapse: collapse;
-  width: 100%;
+  width: 90%;
 }
 
 tr:not(:last-child) {
