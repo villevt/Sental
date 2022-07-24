@@ -9,11 +9,11 @@ A small hobby project for practicing NLP sentiment analysis, and more so ML depl
 
 ## Custom NLP classifier
 
-The NLP classifier is built using sklearn. For the purpose of employing grid search over different models. The custom class is located in `nlpclassifier` and needs to be built by running `pip install .` in the corresponding folder. The custom model class is a requirement for both the backend, and model trainer utility.
+The NLP classifier is built using sklearn for the purpose of employing grid search over different models, by allowing the classifier itself to utilize different classifiers and feature extractors. The custom class is located in `nlpclassifier` and needs to be built by running `pip install .` in the corresponding folder. The custom model class is a requirement for both the backend, and model trainer utility.
 
 ## Command-line script
 
-The command line script for model deployment is located in the `nlp` folder. The script takes in text files in the following format for training
+The command line script for model deployment is located in the `modeltrainer` folder. The script takes in text files in the following format for training
 
     negative text\t0\n
     positive text\t1\n
@@ -32,7 +32,7 @@ The command line script expects the following syntax:
 
 ## Modelling approach
 
-The modelling approach here was relatively simple. I used my custom sklearn classifier with integrated text tokenization which:
+The modelling approach here was relatively simple. I used my custom sklearn classifier with integrated text tokenization which (using NLTK):
 - Normalizes text to lowercase
 - Removes stopwords and punctuation
 - Tokenizes and lemmatizes words
