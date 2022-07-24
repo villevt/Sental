@@ -1,4 +1,5 @@
 import nltk
+from nltk.sentiment.util import mark_negation
 import numpy as np
 import string
 from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
@@ -15,7 +16,29 @@ def lexicon_sentiment(tokenized_sentence, lexicon):
         - tokenized_sentence: A tokenized sentence to calculate the total score for
     """
 
-    return sum([int(lexicon.get(w, 0)) for w in tokenized_sentence])
+    # Return flipped score if the word is negated, otherwise return "real" score
+    return sum([-int(lexicon.get(w, 0)) if "_NEG" in w else int(lexicon.get(w, 0)) for w in tokenized_sentence])
+
+def treebank_to_wordnet(s, pos_tag):
+    """
+    Converts treebank word tags to wordnet tags
+    Arguments:
+        - s:        Untagged string
+        - pos_tag:  Text string to convert
+    """
+
+    match pos_tag[0]:
+        case 'J':
+            return (s, 'a')
+        case 'N':
+            return (s, 'n')
+        case 'V':
+            return (s, 'v')
+        case 'R':
+            return (s, 'r')
+        case _:
+            return (s, '')
+
 
 def tokenize_text(sentence):
     """ 
@@ -28,14 +51,20 @@ def tokenize_text(sentence):
     stopwords = nltk.corpus.stopwords.words("english")
     lemmatizer = nltk.stem.WordNetLemmatizer()
 
-    toks = [w.lower() for w in nltk.tokenize.word_tokenize(sentence) 
-        if w not in stopwords and w not in string.punctuation]
+    # Get tokens
+    toks = [w.lower() for w in nltk.tokenize.word_tokenize(sentence)]
 
     # POS options for wordnet
-    pos = ['n', 'v', 'a', 'r', 's']
+    pos = ['n', 'v', 'a', 'r']
 
     # Properly tag words for lemmatization
-    return [lemmatizer.lemmatize(word, tag) if tag in pos else word for word, tag in nltk.tag.pos_tag(toks)]
+    lemmas = [lemmatizer.lemmatize(word, tag) if tag in pos else word for word, tag in nltk.tag.pos_tag(toks)]
+
+    # Tag negations
+    negations = mark_negation(lemmas, double_neg_flip=True)
+
+    # Return filtered lemmas: stopwords and punctuation removed
+    return [w for w in negations if w not in stopwords and w not in string.punctuation]
 
 # Returns a dummy value. Required to disable default feature extractor preprocessors/tokenizers
 def dummy(x):
