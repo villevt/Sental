@@ -23,7 +23,7 @@ The command line script for model deployment is located in the `modeltrainer` fo
     
 Where 0 denotes a negative, and 1 denotes a positive text.
 
-The script then picks a best model out of multiple options, based on balanced accuracy score. Once the best model is selected, it is dumped into file `model.joblib`.
+The script then picks a best model out of multiple options, based on balanced accuracy score. Once the best model is selected, it is dumped into file `sentiment_classifier.joblib.pkl`.
 
 The command line script expects the following syntax:
 
@@ -77,7 +77,7 @@ NOTE: The frontend is not responsive and won't look good on mobile devices.
 
 ## Model data
 
-I constructed the model on sentiment data (`nlp/data`) derived from https://www.kaggle.com/datasets/marklvl/sentiment-labelled-sentences-data-set
+I constructed the model on sentiment data (`modeltrainer/data`) derived from https://www.kaggle.com/datasets/marklvl/sentiment-labelled-sentences-data-set
 
 The original dataset is attributed to _'From Group to Individual Labels using Deep Features', Kotzias et. al,. KDD 2015_
 
