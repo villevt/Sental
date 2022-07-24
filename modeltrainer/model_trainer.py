@@ -1,8 +1,6 @@
 import argparse
 import joblib
 from math import ceil, floor
-
-from sklearn.preprocessing import MinMaxScaler
 from nlpclassifier import NLPClassifier
 import numpy as np
 import os
@@ -14,6 +12,7 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import ComplementNB, GaussianNB, MultinomialNB
 from sklearn.linear_model import SGDClassifier, LogisticRegression
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import LinearSVC
 
 
@@ -80,15 +79,32 @@ if __name__ == "__main__":
         lexicon = None
 
     # Use a select set of estimators
-    estimators = [ComplementNB(), GaussianNB(), MultinomialNB(), LogisticRegression(penalty="l1", solver="saga"),
-        LinearSVC(class_weight="balanced"), SGDClassifier(class_weight="balanced")]
+    estimators_minmax = [ComplementNB(), GaussianNB(), MultinomialNB(), LinearSVC(class_weight="balanced"), 
+        SGDClassifier(class_weight="balanced")]
+
+    estimators_scaled = [LogisticRegression(penalty="elasticnet", solver="saga", l1_ratio=0.5, tol=1e-2, C=0.25)]
+
+    grid_minmax = {
+        "estimator": [CalibratedClassifierCV(e, method="sigmoid", cv=5) for e in estimators_minmax],
+        "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
+        "ngram_range": [(1, 1), (1, 2), (1, 3)],
+        "min_df": [0, 1, 2],
+        "scaler": [MinMaxScaler(feature_range=(0, 1))]
+    }
+
+    grid_scaled = {
+        "estimator": [CalibratedClassifierCV(e, method="sigmoid", cv=5) for e in estimators_scaled],
+        "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
+        "ngram_range": [(1, 1), (1, 2), (1, 3)],
+        "min_df": [0, 1, 2],
+        "scaler": [StandardScaler()]
+    }
 
     # Perform grid search
-    gs = GridSearchCV(NLPClassifier(lexicon=lexicon), param_grid={
-        "feature_extractor": [CountVectorizer(), TfidfVectorizer()],
-        "estimator": [CalibratedClassifierCV(e, method="sigmoid", cv=5) for e in estimators],
-        "ngram_range": [(1, 1), (1, 2), (1, 3)],
-        "min_df": [0, 1, 2]}, verbose=1, n_jobs=-1)
+    gs = GridSearchCV(NLPClassifier(lexicon=lexicon), param_grid=[
+        grid_minmax,
+        grid_scaled
+    ], verbose=1, n_jobs=-1)
     gs.fit(X_train, y_train)
 
     # Pretty-print cv results

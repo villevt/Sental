@@ -28,8 +28,14 @@ def tokenize_text(sentence):
     stopwords = nltk.corpus.stopwords.words("english")
     lemmatizer = nltk.stem.WordNetLemmatizer()
 
-    return np.array([lemmatizer.lemmatize(w.lower()) for w in nltk.tokenize.word_tokenize(sentence) 
-        if w not in stopwords and w not in string.punctuation])
+    toks = [w.lower() for w in nltk.tokenize.word_tokenize(sentence) 
+        if w not in stopwords and w not in string.punctuation]
+
+    # POS options for wordnet
+    pos = ['n', 'v', 'a', 'r', 's']
+
+    # Properly tag words for lemmatization
+    return [lemmatizer.lemmatize(word, tag) if tag in pos else word for word, tag in nltk.tag.pos_tag(toks)]
 
 # Returns a dummy value. Required to disable default feature extractor preprocessors/tokenizers
 def dummy(x):
