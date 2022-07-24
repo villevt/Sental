@@ -1,6 +1,8 @@
 import argparse
 import joblib
 from math import ceil, floor
+
+from sklearn.preprocessing import MinMaxScaler
 from nlpclassifier import NLPClassifier
 import numpy as np
 import os
@@ -8,6 +10,7 @@ import pandas as pd
 from sklearn.base import clone
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import ComplementNB, GaussianNB, MultinomialNB
 from sklearn.linear_model import SGDClassifier, LogisticRegression
@@ -98,6 +101,8 @@ if __name__ == "__main__":
     print(f"Mean score on validation set: {gs.best_score_}")
     print(
         f"Balanced accuracy score on test set of {ceil((1 - float(args.s)) * 100)}%: {gs.score(X_test, y_test)}")
+    
+    print(pd.DataFrame(classification_report(y_test, gs.best_estimator_.predict(X_test), output_dict=True)))
 
     # Retrain the model on full data
     X_full = np.concatenate((X_train, X_test), axis=0)
@@ -109,7 +114,8 @@ if __name__ == "__main__":
         feature_extractor=clone(gs.best_estimator_.feature_extractor),
         min_df=gs.best_estimator_.min_df,
         ngram_range=gs.best_estimator_.ngram_range,
-        lexicon=lexicon
+        lexicon=lexicon,
+        scaler=MinMaxScaler(feature_range=(0, 1))
     )
 
     final_estimator.fit(X_full, y_full)

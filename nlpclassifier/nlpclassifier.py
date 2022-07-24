@@ -5,6 +5,7 @@ from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.naive_bayes import ComplementNB, GaussianNB, MultinomialNB
+from sklearn.preprocessing import MinMaxScaler
 
 def lexicon_sentiment(tokenized_sentence, lexicon):
     """
@@ -36,7 +37,7 @@ def dummy(x):
 
 class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
     def __init__(self, feature_extractor=CountVectorizer(), estimator=ComplementNB(), 
-        ngram_range=(1, 1), min_df=0, lexicon=None):
+        ngram_range=(1, 1), min_df=0, lexicon=None, scaler=MinMaxScaler(feature_range=(0, 1))):
         """ 
         Inits the model.
         Arguments:
@@ -49,14 +50,18 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
                 - MultinomialNB()
                 - LinearSVC()
                 - SGDClassifier()
+                - LogisticRegression()
             ngram_range: Range of ngrams to produce as features
             lexicon: Optional lexicon for extracting sentiment scores
+            scaler: Sklearn scaler for scaling the data
         """
 
         self.feature_extractor = feature_extractor
         self.ngram_range = ngram_range
         self.min_df = min_df
         self.lexicon = lexicon
+
+        self.scaler = scaler
 
         self.estimator = estimator
 
@@ -83,6 +88,10 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
                 self.lexicon = None
             else:
                 X_processed = np.column_stack((X_processed, [lexicon_sentiment(t, self.lexicon) for t in tokens]))
+
+        # Scale features
+        if self.scaler:
+            X_processed = self.scaler.fit_transform(X_processed)
 
         self.estimator = self.estimator.fit(X_processed, y)
 
@@ -115,6 +124,10 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
         # Get lexicon based features and append to matrix
         if self.lexicon:
             X_processed = np.column_stack((X_processed, [lexicon_sentiment(t, self.lexicon) for t in tokens]))
+        
+        # Scale features
+        if self.scaler:
+            X_processed = self.scaler.transform(X_processed)
 
         y = self.estimator.predict(X_processed)
         return y
@@ -136,6 +149,10 @@ class NLPClassifier(BaseEstimator, ClassifierMixin, TransformerMixin):
         # Get lexicon based features and append to matrix
         if self.lexicon:
             X_processed = np.column_stack((X_processed, [lexicon_sentiment(t, self.lexicon) for t in tokens]))
+
+        # Scale features
+        if self.scaler:
+            X_processed = self.scaler.transform(X_processed)
 
         y = self.estimator.predict_proba(X_processed)
         return y
