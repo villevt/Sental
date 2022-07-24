@@ -51,6 +51,7 @@ Different classifiers used were:
 - Multinomial Naive Bayes
 - Linear Support Vector Classifier
 - Stochastic Gradient Descent Classifier
+- (Lasso) Logistic Regression
 
 Based on my results so far, it seems that Linear SVC is the best approach, together with TF-IDF, and mono- and bi-gram features. The model exhibited a validation balanced accuracy of 80.30% on 1 800 observations' 5-fold CV, and a test balanced accuracy of 80.79% on a test set of 1 200 observations.
 
