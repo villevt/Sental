@@ -100,8 +100,6 @@ Minimal (TypeScript) React single page app, that allows for inputting text, and 
 
 Frontend can be run from `frontend`-folder with `npm start`. Note that an enviroment variable REACT_APP_BACKEND_URL has to be specified to connect to the backend api.
 
-NOTE: The frontend is not responsive and won't look good on mobile devices.
-
 ## Deployment
 
 The project is set up to work with containers. Due to Google Cloud free-tier limitations, I decided to *not* fully automate the build/deployment process. My process for deploying is:
