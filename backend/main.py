@@ -6,6 +6,7 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 import joblib
+import os
 
 # Init API and rate limiter
 limiter = Limiter(key_func=get_remote_address)
@@ -14,7 +15,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[os.environ["FRONTEND_URL"]],
     allow_methods=["*"],
     allow_headers=["*"]
 )

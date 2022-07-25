@@ -90,7 +90,7 @@ The backend for the project is a minimalistic FastAPI server that responds to te
 - Requests can only contain upwards to 400 characters
 - A single IP address can only make up to 100 requests per day
 
-Backend can be run from `backend`-folder with `uvicorn main:app`.
+Backend can be run from `backend`-folder with `uvicorn main:app`. Please note, that you need to specify FRONTEND_URL as an environment variable to allow frontend with CORS.
 
 Since the backend is built on FastAPI, the backend also comes with Swagger documentation in path `/docs` in the api.
 
