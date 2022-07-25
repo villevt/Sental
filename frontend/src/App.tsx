@@ -30,7 +30,7 @@ function App() {
       e.preventDefault();
 
       if (text.length > 0 && text.length < 401) {
-        axios.post("http://localhost:8000/classify/", { text })
+        axios.post(process.env.REACT_APP_BACKEND_URL + "/classify/", { text })
           .then(res => {
             setLoading(false);
             const positive = res.data.positive;
