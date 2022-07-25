@@ -99,3 +99,32 @@ td:first-child {
 td {
   padding-bottom: 0.4em;
 }
+
+footer {
+  display: inline-block;
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  color: #ffffff;
+  font-size: 1em;
+  font-weight: bold;
+  transition: all .2s ease-in-out;
+}
+
+footer:hover {
+  transform: scale(1.05);
+}
+
+footer > a {
+  border: 1px solid #fff;
+  border-radius: 4px;
+  padding: 6px;
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0px 0px 2px #ccc;
+}
+
+footer > a > img {
+  vertical-align: bottom;
+  height: 1.25em;
+}

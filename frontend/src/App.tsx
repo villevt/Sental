@@ -95,6 +95,11 @@ function App() {
           </table>
         </div>
       </main>
+      <footer>
+        <a href="https://github.com/villevt/Sentimentai">
+          Source in <img src={require("./GitHub-Mark-Light-120px-plus.png")}/>
+        </a>
+      </footer>
     </div>
   );
 }
