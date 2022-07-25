@@ -1,19 +1,25 @@
-FROM node:16.16.0-buster-slim
+FROM node:16.16.0-buster-slim as build
 
 ARG backend_url
 ENV REACT_APP_BACKEND_URL=$backend_url
 
 # Copy project-specific files
 COPY ./frontend ./frontend
-COPY ./nlpclassifier ./nlpclassifier
 
 # Install node packages
 WORKDIR /frontend
 RUN npm ci
 
-# Build and install server dependencies
-RUN npm run build && \
-    npm install -g serve
+# Build
+RUN npm run build 
+
+# Copy only built files
+FROM node:16.16.0-buster-slim
+
+COPY --from=build ./frontend/build ./build
+
+# Install serve for running the built server
+RUN npm install -g serve
 
 # Run the application
 CMD ["serve", "-s", "build"]
