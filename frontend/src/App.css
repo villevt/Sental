@@ -4,13 +4,12 @@
 
 header {
   background-color: #ffffff;
-  min-height: 15vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0px 0px 4px #ccc;
+  min-height: 10vh
 }
 
 .header-logo {
@@ -20,18 +19,17 @@ header {
 main {  
   background-color: #ffffff;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: space-around;
   border-radius: 4px; 
-  box-shadow: 0px 0px 4px #ccc;
-  min-height: 60vh;
-  min-width: 65vw;
+  min-height: 85vh;
+  min-width: 95vw;
   
   position: absolute;
-  top: calc(50% + 15vh);
+  top: calc(50% + 10vh);
   left: 50%;
-  transform: translate(-50%, calc(-50% - 7.5vh));
+  transform: translate(-50%, calc(-50% - 5vh));
 }
 
 #text-input-col{
@@ -40,7 +38,7 @@ main {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   height: 50vh;
-  width: calc(70% - 5%);
+  width: 90%;
   margin: 2.5%;
 }
 
@@ -76,16 +74,15 @@ textarea:focus {
 }
 
 #results {
-  border-left: 1px solid rgb(234, 234, 234);
-  padding-left: 2em;
-  width: 30%;
-  height: 50vh;
+  border-top: 1px solid rgb(234, 234, 234);
+  width: 90%;
+  height: 15vh;
   text-align: left;
 }
 
 table {
   border-collapse: collapse;
-  width: 90%;
+  width: 100%;
 }
 
 tr:not(:last-child) {
@@ -97,18 +94,19 @@ td:first-child {
 }
 
 td {
-  padding-bottom: 0.4em;
+  padding: 0.4em;
 }
 
 footer {
   display: inline-block;
   position: absolute;
-  bottom: 1em;
+  bottom: 2em;
   right: 1em;
   color: #ffffff;
   font-size: 1em;
   font-weight: bold;
   transition: all .2s ease-in-out;
+  filter: brightness(0.28);
 }
 
 footer:hover {
@@ -121,10 +119,47 @@ footer > a {
   padding: 6px;
   color: #ffffff;
   text-decoration: none;
-  box-shadow: 0px 0px 2px #ccc;
 }
 
 footer > a > img {
   vertical-align: bottom;
   height: 1.25em;
+}
+
+@media (min-width:961px)  { 
+  header {
+    min-height: 15vh;
+  }
+
+  main {
+    flex-direction: row;
+    min-height: 60vh;
+    min-width: 65vw;
+
+    top: calc(50% + 15vh);
+    left: 50%;
+    transform: translate(-50%, calc(-50% - 7.5vh));
+  }
+
+  #text-input-col {
+    height: 50vh;
+    width: calc(70% - 5%);
+    margin: 2.5%;
+  }
+
+  #results {
+    border-left: 1px solid rgb(234, 234, 234);
+    padding-left: 2em;
+    width: 30%;
+    height: 50vh;
+  }
+
+  table {
+    width: 90%;
+  }
+
+  footer {
+    bottom: 1em;
+    filter: none;
+  }
 }
