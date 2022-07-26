@@ -97,7 +97,7 @@ function App() {
       </main>
       <footer>
         <a href="https://github.com/villevt/Sentimentai">
-          Source in <img src={require("./GitHub-Mark-Light-120px-plus.png")}/>
+          Source in <img src={require("./GitHub-Mark-Light-120px-plus.png")} alt="github logo"/>
         </a>
       </footer>
     </div>

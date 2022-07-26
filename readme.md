@@ -9,7 +9,8 @@ A simple text sentiment analyzer (deployed publicly in https://sentimentai-zycg4
 
 The intention of this project was to practice the "practical" side of ML applications, and hence there is a lot of room for improvement, for example, in the model selection process, which is heavily automated, and not fully optimized. The automated process also leaves a lot of search space e.g. for different hyperparameters undiscovered, since I aimed for relatively quick training on my own PC. Besides optimizing the model, the deployment pipeline could be even more robust, and automated.
 
-![Screenshot of the application](/app.png?raw=true "Screenshot of the application")
+![Screenshot of the application on PC](/app.png?raw=true "Screenshot of the application on PC")
+![Screenshot of the application on mobile](/app_mobile.png?raw=true "Screenshot of the application on mobile")
 
 ## Custom NLP classifier
 
