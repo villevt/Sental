@@ -1,8 +1,13 @@
 body {
-  background-color: #fca46d;
   margin: 0;
   font-family: "Nirmala UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #4a4545;
+}
+
+@media (min-width:961px)  { 
+  body {
+    background-color: #e9e9e9;
+  }
 }
