@@ -13,7 +13,7 @@ The intention of this project was to practice the "practical" side of ML applica
 
 ## Custom NLP classifier
 
-The project has a customer sklearn module, which wraps other sklearn classes for the purpose of employing e.g. grid search over different estimators and feature extractors. The custom class is located in `nlpclassifier` and needs to be built by running `pip install .` in the corresponding folder, as it is a package of its own. The custom model class is a requirement for both the backend, and model trainer utility.
+The project has a custom sklearn module, which wraps other sklearn classes for the purpose of employing e.g. grid search over different estimators and feature extractors. The custom class is located in `nlpclassifier` and needs to be built by running `pip install .` in the corresponding folder, as it is a package of its own. The custom model class is a requirement for both the backend, and model trainer utility.
 
 ## Command-line script
 
